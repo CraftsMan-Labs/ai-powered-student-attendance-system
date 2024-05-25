@@ -105,11 +105,6 @@ def admin_portal():
 
     def create_timetable(class_name, *subject_teacher_mapping):
         db = SessionLocal()
-        # print(subject_teacher_mapping)
-        # subject_teacher_mapping = (1, 1, 2, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
-        # format it to
-        # subject_teacher_mapping = [(1, 1), (2, 3), (1, 1), (1, 1), (1, 1), (1, 1), (1, 1), (1, 1), (1, 1)]
-        subject_teacher_mapping = [(subject_teacher_mapping[i], subject_teacher_mapping[i+1]) for i in range(0, len(subject_teacher_mapping), 2)]
         for period, (subject_id, teacher_id) in enumerate(subject_teacher_mapping, start=1):
             timetable = TimetableDB(class_name=class_name, period=period, subject_id=subject_id, teacher_id=teacher_id)
             db.add(timetable)
@@ -148,6 +143,7 @@ def admin_portal():
         teacher_dropdown = gr.Dropdown(choices=[(f"{teacher[1]} (ID: {teacher[0]})", teacher[0]) for teacher in teachers], label=f"Period {i+1} Teacher")
         subject_teacher_dropdowns.append((subject_dropdown, teacher_dropdown))
         teacher_dropdowns.append(teacher_dropdown)
+
     timetable_interface = gr.Interface(
         fn=create_timetable,
         inputs=["text"] + [dropdown for pair in subject_teacher_dropdowns for dropdown in pair],
